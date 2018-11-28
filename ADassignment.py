@@ -3,6 +3,8 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
+from SpecialCharacter import special, special_Character, special_semiclone, semiclone, special_Character2, special2, special3, special_Character3, special4
+
 
 class SWP(QWidget):
 
@@ -33,8 +35,15 @@ class SWP(QWidget):
 
         # 3 line UI
         self.taglabel = QLabel("코드 규칙 출처 - \t  국민대 소프트웨어 프로젝트 2")
+        self.statuslabel = QLabel("Status Message:")
+        self.statusLineEdit = QLineEdit()
+        self.statusLineEdit.setReadOnly(True)
+        self.statusLineEdit.setAlignment(Qt.AlignCenter)
         hbox2 = QHBoxLayout()
         hbox2.addWidget(self.taglabel)
+        hbox2.addStretch()
+        hbox2.addWidget(self.statuslabel)
+        hbox2.addWidget(self.statusLineEdit)
 
         # 세로 배치
         vbox = QVBoxLayout()
@@ -49,78 +58,53 @@ class SWP(QWidget):
         self.clickbutton.clicked.connect(self.clickbuttonClicked)
 
     def openbuttonClicked(self):
+        self.resultLineEdit.clear() #파일 다시 불러오면 결과창 초기
+        faddress = QFileDialog.getOpenFileName(self)
+        self.fname = faddress[0].split('/')[-1]
         try:
-            faddress = QFileDialog.getOpenFileName(self)
-            self.fname = faddress[0].split('/')[-1]
             f = open(self.fname, 'r')
-            data = f.read()
-            self.fileLineEdit.setText(data)
-            self.taglabel.setText(faddress[0])
         except:
-            self.taglabel.setText("파일이 없습니다.")
-
-
+            self.taglabel.setText("Error = FileNotFoundError")
+            self.statusLineEdit.setText("해당 파일이 같은 디렉토리에 있는지 확인해주세요.")
+        else:
+            data = f.read()
+            self.taglabel.setText("코드 규칙 출처 - \t  국민대 소프트웨어 프로젝트 2")
+            self.fileLineEdit.setText(data)
+            self.statusLineEdit.setText('open = ' + faddress[0])
 
     def clickbuttonClicked(self):
-        special_Character = ['+', '-', '/', '%', '=', '!', '*', '-', '/', '%', '<', '>']
-
-        #괄호, 대괄호 (brackets; [] ), 중괄호 (braces; {} ) 의 안쪽에 불필요한 공백을 두지 않는다. ex) [ ]
-        special_Character2 = ['(', '{','[']
         string = []
-
         f = open(self.fname, 'r')
-
         for line in f:
-            line = line[:line.find(';')] + '\n' #세미콜론 제거
-            for i in range(len(line)): #line글자 수 만큼 반복해서 검사하고 고침
-                for idx in range(len(line)):
-                    enter = line.find('\n')
-                    if line[idx] in special_Character and line[idx+1] in special_Character2: # a!=b
-                        if line[idx-1] != " " and line[idx+2] != " ":
-                            line = line[:idx] + " " + line[idx] + line[idx+1] + " " + line[idx+2:]
-                        elif line[idx-1] != " ":
-                            line = line[:idx] + " " + line[idx] + line[idx+1:]
-                        elif line[idx+2] != " ":
-                            line = line[:idx] + line[idx] + line[idx+1]+ " " + line[idx+2:]
-
-                    #elif line[enter-1] == ';': #세미 콜론 제거
-                     #   line = line[:-2] + '\n'
-
-                    #elif line[idx] == ':':
-                     #   if line[idx-1] == " " and line[idx+1] != " ":
-                      #      line = line[:idx-1] + line[idx] + " " + line[idx+1:]
-                       # elif line[idx-1] == " ":
-                        #    line = line[:idx-1] + line[idx:]
-                        #elif line[idx+1] != " ":
-                         #   line = line[:idx] + line[idx] + " " + line[idx+1:]
-
-                    elif line[idx] == ',':
-                        if line[idx-1] == " ":
-                            if line[idx+1] != " ": #a ,b
-                                line = line[:idx - 1] + line[idx] + " " + line[idx + 1:]
-                            else: #a , b
-                                line = line[:idx - 1] + line[idx] + line[idx + 1:]
-                        elif line[idx+1] != " ": #a,b
-                            line = line[:idx] + line[idx] + " " + line[idx+1:]
-
-                    elif line[idx] in special_Character2:
-                        if line[idx + 1] == " ":
-                            line = line[:idx] + line[idx] + line[idx+2:]
-                            break # 안멈추면 인덱스 에러
-
+            for character in line:
+                if character in special_Character:
+                    line = special(line)
+                elif character == special_semiclone and line[-2] == special_semiclone:
+                    line = semiclone(line)
+                elif character in special_Character2:
+                    line = special2(line)
+                elif character in special_Character3:
+                    line = special3(line)
             string.append(line)
+
+        for i in range(len(string)):
+            if '\n' not in string[i]:
+                string[i] = string[i] + '\n'
+
+        string2 = " ".join(string) #string 문자열로 변환
+        string = special4(string2) #import 검사
+
 
         f.close()
         self.writefile(string)
         self.showfile()
 
-    #파일 읽기
     def writefile(self, string):
         f = open(self.fname, 'w')
         for i in string:
             f.write(i)
         f.close()
-    #파일 resultlineEdit에 보이기
+
     def showfile(self):
         f = open(self.fname, 'r')
         output = f.read()
@@ -134,5 +118,6 @@ if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
     game = SWP()
+    game.setWindowTitle('SW2 - 국민대 파이썬 코딩 규칙')
     game.show()
     sys.exit(app.exec_())

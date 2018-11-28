@@ -2,6 +2,7 @@ special_Character = ['<', '>', '+', '-', '/', '%', '=', '*','!']
 special_semiclone = ';'
 special_Character2 = [':', ',']
 special_Character3 = ['[', ']', '(', ')', '{', '}']
+special_Character4 = ['import']
 
 def special(line):
     string = ""
@@ -64,3 +65,15 @@ def special3(line):
                 line = line[:index].rstrip() + '@' + line[index + 1:].lstrip()
 
     return special(special2(string))
+
+def special4(line):
+    tmp = line.split()
+    tmpline = ""
+    if tmp[0] in special_Character4: #import a, b
+        for i in range(1, len(tmp)):
+            if i == len(tmp) - 1:
+                tmpline += tmp[0] + ' ' + tmp[i] + '\n' #마지막 검사면 ,가 없으므로 그냥[i]
+            else:
+                tmpline += tmp[0] + ' ' + tmp[i][:-1] + '\n' #[:-1]은 ',' 제거
+
+    return tmpline
