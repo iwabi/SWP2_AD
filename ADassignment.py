@@ -75,13 +75,13 @@ class SWP(QWidget):
             for i in range(len(line)): #line글자 수 만큼 반복해서 검사하고 고침
                 for idx in range(len(line)):
                     enter = line.find('\n')
-                    if line[idx] in special_Character and line[idx-1] != '!':
-                        if line[idx-1] != " " and line[idx+1] != " ":
-                            line = line[:idx] + " " + line[idx] + " " + line[idx+1:]
+                    if line[idx] in special_Character and line[idx+1] in special_Character2: # a!=b
+                        if line[idx-1] != " " and line[idx+2] != " ":
+                            line = line[:idx] + " " + line[idx] + line[idx+1] + " " + line[idx+2:]
                         elif line[idx-1] != " ":
                             line = line[:idx] + " " + line[idx] + line[idx+1:]
-                        elif line[idx+1] != " ":
-                            line = line[:idx] + line[idx] + " " + line[idx+2:]
+                        elif line[idx+2] != " ":
+                            line = line[:idx] + line[idx] + line[idx+1]+ " " + line[idx+2:]
 
                     #elif line[enter-1] == ';': #세미 콜론 제거
                      #   line = line[:-2] + '\n'
@@ -109,11 +109,6 @@ class SWP(QWidget):
                             break # 안멈추면 인덱스 에러
 
             string.append(line)
-        for line in f:
-            line.split(' ')
-            print(line)
-            if 'class' in line:
-                print("OK")
 
         f.close()
         self.writefile(string)
