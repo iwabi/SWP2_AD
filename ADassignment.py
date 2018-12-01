@@ -86,7 +86,7 @@ class SWP(QWidget):
                 elif character in special_Character2:
                     line = special2(line)
                 elif character in special_Character3:
-                    line = special3(line)트
+                    line = special3(line)
                 elif character == special_semiclone and line[-2] == special_semiclone:
                     line = semiclone(line)
             if line.split()[0] == '\n': #공백 라인이면 append
