@@ -1,15 +1,16 @@
 ##Adventure Design Assignment
 ##Software Project2
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-from SpecialCharacter import special, special_Character, special_semiclone, semiclone, special_Character2, special2, special3, special_Character3, special4
-
+from SpecialCharacter import special, special_Character, special_semiclone, semiclone, special_Character2, special2, special3, special_Character3, special4, special_Character4
+import time
 
 class SWP(QWidget):
 
+
     def __init__ (self):
         super().__init__()
+        self.string = [] #고친 파일 내용을 담을 리스 초기화
         self.initUI()
 
 
@@ -36,6 +37,9 @@ class SWP(QWidget):
         # 3 line UI
         self.taglabel = QLabel("코드 규칙 출처 - \t  국민대 소프트웨어 프로젝트 2")
         self.statuslabel = QLabel("Status Message:")
+        self.saveButton = QPushButton("SAVE")
+
+        self.saveButton.setEnabled(False)
         self.statusLineEdit = QLineEdit()
         self.statusLineEdit.setReadOnly(True)
         self.statusLineEdit.setAlignment(Qt.AlignCenter)
@@ -44,7 +48,7 @@ class SWP(QWidget):
         hbox2.addStretch()
         hbox2.addWidget(self.statuslabel)
         hbox2.addWidget(self.statusLineEdit)
-
+        hbox2.addWidget(self.saveButton)
         # 세로 배치
         vbox = QVBoxLayout()
         vbox.addLayout(hbox)
@@ -52,13 +56,14 @@ class SWP(QWidget):
         vbox.addLayout(hbox2)
         self.setLayout(vbox)
 
-
         # 이벤트 핸들러
         self.openbutton.clicked.connect(self.openbuttonClicked)
         self.clickbutton.clicked.connect(self.clickbuttonClicked)
+        self.saveButton.clicked.connect(self.saveButtonClicked)
 
     def openbuttonClicked(self):
         self.resultLineEdit.clear() #파일 다시 불러오면 결과창 초기
+        self.saveButton.setEnabled(False)
         faddress = QFileDialog.getOpenFileName(self)
         self.fname = faddress[0].split('/')[-1]
         try:
@@ -73,29 +78,36 @@ class SWP(QWidget):
             self.statusLineEdit.setText('open = ' + faddress[0])
 
     def clickbuttonClicked(self):
-        string = []
         f = open(self.fname, 'r')
         for line in f:
             for character in line:
                 if character in special_Character:
                     line = special(line)
-                elif character == special_semiclone and line[-2] == special_semiclone:
-                    line = semiclone(line)
                 elif character in special_Character2:
                     line = special2(line)
                 elif character in special_Character3:
-                    line = special3(line)
-            string.append(line)
+                    line = special3(line)트
+                elif character == special_semiclone and line[-2] == special_semiclone:
+                    line = semiclone(line)
+            if line.split()[0] == '\n': #공백 라인이면 append
+                self.string.append(line)
+                continue
+            if line.split()[0] in special_Character4:
+                line = special4(line)
+            self.string.append(line)
 
-        for i in range(len(string)):
-            if '\n' not in string[i]:
-                string[i] = string[i] + '\n'
-
-        string2 = " ".join(string) #string 문자열로 변환
-        string = special4(string2) #import 검사
-
+        for i in range(len(self.string)):
+            if '\n' not in self.string[i]:
+                self.string[i] += '\n'
 
         f.close()
+        self.saveButton.setEnabled(True)
+        self.resultLineEdit.setText(''.join(self.string)) #string리스트를 문자열로 변환 후 표시
+        self.statusLineEdit.setText("저장하려면 SAVE를 누르세요.")
+
+    def saveButtonClicked(self):
+        self.statusLineEdit.setText("저장되었습니다.")
+        string = self.resultLineEdit.toPlainText() #resultLineEdit의 텍스트를 저장
         self.writefile(string)
         self.showfile()
 
@@ -120,4 +132,4 @@ if __name__ == "__main__":
     game = SWP()
     game.setWindowTitle('SW2 - 국민대 파이썬 코딩 규칙')
     game.show()
-    sys.exit(app.exec_())
+sys.exit(app.exec_())

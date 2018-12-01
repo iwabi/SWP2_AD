@@ -2,7 +2,8 @@ special_Character = ['<', '>', '+', '-', '/', '%', '=', '*','!']
 special_semiclone = ';'
 special_Character2 = [':', ',']
 special_Character3 = ['[', ']', '(', ')', '{', '}']
-special_Character4 = ['import']
+special_Character4 = ['from', 'import']
+
 
 def special(line):
     string = ""
@@ -67,13 +68,24 @@ def special3(line):
     return special(special2(string))
 
 def special4(line):
+    line = special2(line)
     tmp = line.split()
-    tmpline = ""
-    if tmp[0] in special_Character4: #import a, b
-        for i in range(1, len(tmp)):
-            if i == len(tmp) - 1:
-                tmpline += tmp[0] + ' ' + tmp[i] + '\n' #마지막 검사면 ,가 없으므로 그냥[i]
-            else:
-                tmpline += tmp[0] + ' ' + tmp[i][:-1] + '\n' #[:-1]은 ',' 제거
+    string = ""
+    string1 = ""
+    if tmp[0] == special_Character4[0]:
+        index = tmp.index(special_Character4[1])
+        for i in range(index + 1):
+            string = string + tmp[i] + ' '
+        for i in range(index + 1, len(tmp)):
+            string1 += string + tmp[i] + '\n'
+            string1 = string1.replace(',', '')
 
-    return tmpline
+    elif tmp[0] == special_Character4[1]:
+        index = tmp.index(special_Character4[1])
+        for i in range(index + 1):
+            string = string + tmp[i] + ' '
+        for i in range(index + 1, len(tmp)):
+            string1 += string + tmp[i] + '\n'
+            string1 = string1.replace(',', '')
+
+    return string1
