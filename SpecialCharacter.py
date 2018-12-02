@@ -6,7 +6,12 @@ class specialcharacter(object):
         self.special_Character3 = ['[', ']', '(', ')', '{', '}']
         self.special_Character4 = ['from', 'import']
 
-
+    def semiclone(self, line):
+        if line[-1] == ';' or line[-2] == ';':  # 세미콜론제거
+            line = line[:-1]
+        elif line.find(';') != -1:
+            line = line[:line.find(';')] + '\n' + line[line.find(';') + 1:] + '\n'
+        return line
 
     def special(self,line):
         string = ""
