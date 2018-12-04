@@ -9,13 +9,12 @@ class specialcharacter(object):
     def semiclone(self, line):
         if line[-1] == ';' or line[-2] == ';':  # 세미콜론제거
             line = line[:-1]
-        elif line.find(';') != -1:
+        elif line[line.find(';')+1].isalpha():
             line = line[:line.find(';')] + '\n' + line[line.find(';') + 1:] + '\n'
         return line
 
     def special(self,line):
         string = ""
-
         for i in line:
             if i not in self.special_Character:
                 string += i
