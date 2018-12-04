@@ -2,7 +2,7 @@
 ##Software Project2
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-from SpecialCharacter import special, special_Character, special_semiclone, semiclone, special_Character2, special2, special3, special_Character3, special4, special_Character4
+from SpecialCharacter import specialcharacter
 import time
 
 class SWP(QWidget):
@@ -12,6 +12,8 @@ class SWP(QWidget):
         super().__init__()
         self.string = [] #고친 파일 내용을 담을 리스 초기화
         self.initUI()
+        self.sc = specialcharacter()
+
 
 
     def initUI(self):
@@ -81,25 +83,25 @@ class SWP(QWidget):
         f = open(self.fname, 'r')
         for line in f:
             for character in line:
-                if character in special_Character:
-                    line = special(line)
-                elif character in special_Character2:
-                    line = special2(line)
-                elif character in special_Character3:
-                    line = special3(line)
-                elif character == special_semiclone and line[-2] == special_semiclone:
-                    line = semiclone(line)
-            if line.split()[0] == '\n': #공백 라인이면 append
+                if ';' in line:
+                    line = self.sc.semiclone(line)
+                elif character in self.sc.special_Character:
+                    line = self.sc.special(line)
+                elif character in self.sc.special_Character2:
+                    line = self.sc.special2(line)
+                elif character in self.sc.special_Character3:
+                    line = self.sc.special3(line)
+
+            if line == '\n': #공백 라인이면 append
                 self.string.append(line)
                 continue
-            if line.split()[0] in special_Character4:
-                line = special4(line)
+            if line.split()[0] in self.sc.special_Character4:
+                line = self.sc.special4(line)
             self.string.append(line)
 
         for i in range(len(self.string)):
             if '\n' not in self.string[i]:
                 self.string[i] += '\n'
-
         f.close()
         self.saveButton.setEnabled(True)
         self.resultLineEdit.setText(''.join(self.string)) #string리스트를 문자열로 변환 후 표시
