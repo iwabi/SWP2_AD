@@ -100,7 +100,7 @@ class MainDriver(QWidget):
             elif line.strip().find(self.check.def_Character) == 0:
                 line = self.check.def_check(line)
             elif line.strip().find(self.check.return_Character) == 0:
-                line = line.replace('return', 'return ')
+                line = line.replace('return(', 'return (')
                 line = self.check.return_check(line)
             self.string.append(line)
 

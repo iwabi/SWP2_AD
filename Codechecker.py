@@ -25,7 +25,7 @@ class Codechecker(object):
 
         return line
 
-    def operator_check(self,line): #special
+    def operator_check(self,line): #연산자
         string = ""
         for i in line:
             if i not in self.operator_Character:
