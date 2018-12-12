@@ -137,15 +137,18 @@ class Codechecker(object):
 
     def return_check(self, line): #special7
         tmp = line.split()
-        if tmp[1].find('(') == 0:
-            firstindex = line.index('(')
-            line = line[:firstindex] + line[firstindex + 1:-1]
-        string = ""
-        for i in line:
-            if i not in self.operator_Character:
-                string += i
-            else:
-                string += '@'
+        try:
+            if tmp[1].find('(') == 0:
+                firstindex = line.index('(')
+                line = line[:firstindex] + line[firstindex + 1:-1]
+            string = ""
+            for i in line:
+                if i not in self.operator_Character:
+                    string += i
+                else:
+                    string += '@'
+        except:
+            return line
 
         for i in line:
             if i in self.operator_Character:
@@ -154,3 +157,20 @@ class Codechecker(object):
                     string = string[:index].rstrip() + i + string[index + 1:].lstrip()
                     line = line[:index].rstrip() + '@' + line[index + 1:].lstrip()
         return string
+
+if __name__ == "__main__":
+    code = Codechecker()
+    ex1 = "abc;"
+    print(code.semiclone(ex1))
+    ex2 = "a=[  ]"
+    print(code.bracket_check(ex2))
+    ex3 = "from a import a,b,c"
+    print(code.import_check(ex3))
+    ex4 = "return (abc)"
+    print(code.return_check(ex4))
+    ex5 = "class abc:"
+    print(code.class_check(ex5))
+    ex6 = "a=3"
+    print(code.operator_check(ex6))
+    ex7 = "def abc(x = 0):"
+    print(code.def_check(ex7))
